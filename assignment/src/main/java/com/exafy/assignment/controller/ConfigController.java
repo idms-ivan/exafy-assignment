@@ -1,7 +1,6 @@
 package com.exafy.assignment.controller;
 
 import com.exafy.assignment.dto.CreateNotificationTrigger;
-import com.exafy.assignment.dto.TaskDto;
 import com.exafy.assignment.service.NotificationTriggerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

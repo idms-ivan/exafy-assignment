@@ -1,12 +1,9 @@
 package com.exafy.assignment.controller;
 
-import com.exafy.assignment.dto.ApiResponse;
 import com.exafy.assignment.dto.CreateTaskDto;
 import com.exafy.assignment.dto.TaskDto;
-import com.exafy.assignment.model.Task;
 import com.exafy.assignment.service.TaskService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,14 +44,9 @@ public class TaskController {
     }
 
     @PatchMapping("/{id}/complete")
-    public ResponseEntity<ApiResponse> markAsCompleted(@PathVariable  int id) {
-        System.out.println("************");
+    public ResponseEntity<TaskDto> markAsCompleted(@PathVariable  int id) {
         TaskDto completedTask = taskService.completeTask(id);
-        ApiResponse response = new ApiResponse(completedTask);
-        System.out.println("************");
-        System.out.println(response);
-        System.out.println("************");
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(completedTask);
     }
 
 }

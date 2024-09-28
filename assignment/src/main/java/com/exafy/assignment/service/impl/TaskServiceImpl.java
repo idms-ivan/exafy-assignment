@@ -61,10 +61,6 @@ public class TaskServiceImpl implements TaskService {
 
     }
 
-    @Override
-    public TaskDto getTask(int id) {
-        return toDtoConverter.convert(taskRepository.findById(id).orElseThrow(() -> new NotFoundException("Task with id %s not found.")));
-    }
 
     @Override
     public TaskDto createTask(CreateTaskDto task) {
@@ -108,8 +104,8 @@ public class TaskServiceImpl implements TaskService {
         return toDtoConverter.convert(task);
     }
 
-    @Override
-@Scheduled(cron = "*/20 * * * * ?")
+
+    //@Scheduled(cron = "*/20 * * * * ?")
     public void checkLowPriorityTasks() {
         final List<Task> tasks = tasksWithNotification(PriorityValues.LOW.getPriorityValue());
 
@@ -118,8 +114,8 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
-    @Override
-@Scheduled(cron = "*/10 * * * * ?")
+
+    //@Scheduled(cron = "*/10 * * * * ?")
     public void checkMediumPriorityTasks() {
         final List<Task> tasks = tasksWithNotification(PriorityValues.MEDIUM.getPriorityValue());
 
@@ -128,8 +124,8 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
-    @Override
-   @Scheduled(cron = "*/5 * * * * ?")
+
+    //@Scheduled(cron = "*/5 * * * * ?")
     public void checkHighPriorityTasks() {
         final List<Task> tasks = tasksWithNotification(PriorityValues.HIGH.getPriorityValue());
 

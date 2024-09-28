@@ -16,5 +16,6 @@ public class NotificationTriggers {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(name = "status")
     private String status;
 }

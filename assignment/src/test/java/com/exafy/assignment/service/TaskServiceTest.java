@@ -1,7 +1,11 @@
 package com.exafy.assignment.service;
 
+import com.exafy.assignment.constants.CategoryValues;
+import com.exafy.assignment.constants.PriorityValues;
+import com.exafy.assignment.constants.StatusValues;
 import com.exafy.assignment.converter.CreateTaskDtoToTaskConverter;
 import com.exafy.assignment.converter.TaskToTaskDtoConverter;
+import com.exafy.assignment.dto.CreateTaskDto;
 import com.exafy.assignment.dto.TaskDto;
 import com.exafy.assignment.model.Task;
 import com.exafy.assignment.repository.NotificationTriggerRepository;
@@ -93,4 +97,76 @@ public class TaskServiceTest {
         assertEquals("Zadatak 1", response.get(0).getTitle()); // Check the title of the first task
         assertEquals("Zadatak 2", response.get(1).getTitle()); // Check the title of the second task
     }
+
+    @Test
+    public void shouldCreateTask() {
+
+
+        final CreateTaskDto createTaskDto = CreateTaskDto.builder()
+                .title("New Task")
+                .description("New Task Description")
+                .dueDate(LocalDate.now())
+                .priority("high")
+                .status("Pending")
+                .category("work")
+                .assignedUser("test@example.com")
+                .build();
+
+
+        final Task newTask = Task.builder()
+                .id(1)
+                .title(createTaskDto.getTitle())
+                .description(createTaskDto.getDescription())
+                .dueDate(createTaskDto.getDueDate())
+                .priority(createTaskDto.getPriority())
+                .status(createTaskDto.getStatus())
+                .category(createTaskDto.getCategory())
+                .assignedUser(createTaskDto.getAssignedUser())
+                .build();
+
+
+        final TaskDto taskDto = new TaskDto(
+                newTask.getId(),
+                newTask.getTitle(),
+                newTask.getDescription(),
+                newTask.getDueDate(),
+                newTask.getPriority(),
+                newTask.getStatus(),
+                newTask.getCategory(),
+                newTask.getAssignedUser()
+        );
+
+
+        Mockito.mockStatic(PriorityValues.class);
+        Mockito.mockStatic(CategoryValues.class);
+        Mockito.mockStatic(StatusValues.class);
+
+
+        PriorityValues.checkIsValid(createTaskDto.getPriority());
+        CategoryValues.checkIsValid(createTaskDto.getCategory());
+        StatusValues.checkIsValid(createTaskDto.getStatus());
+
+
+        when(toTaskConverter.convert(createTaskDto)).thenReturn(newTask);
+        when(taskRepository.save(newTask)).thenReturn(newTask);
+
+
+        when(toDtoConverter.convert(newTask)).thenReturn(taskDto);
+
+        TaskDto result = taskService.createTask(createTaskDto);
+
+
+        assertEquals("New Task", result.getTitle());
+        assertEquals("New Task Description", result.getDescription());
+        assertEquals("high", result.getPriority());
+        assertEquals("Pending", result.getStatus());
+        assertEquals("work", result.getCategory());
+        assertEquals("test@example.com", result.getAssignedUser());
+
+
+        Mockito.verify(toTaskConverter).convert(createTaskDto);
+        Mockito.verify(taskRepository).save(newTask);
+        Mockito.verify(toDtoConverter).convert(newTask);
+    }
+
 }
