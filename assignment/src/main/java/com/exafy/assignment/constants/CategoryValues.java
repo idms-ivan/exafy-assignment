@@ -14,12 +14,12 @@ public enum CategoryValues {
     final String categoryValues;
 
 
-    public static CategoryValues checkIsValid(String category){
+    public static void checkIsValid(String category){
         for(CategoryValues categoryValues : CategoryValues.values()){
             if(categoryValues.getCategoryValues().equalsIgnoreCase(category)){
-                return categoryValues;
+                return;
             }
         }
-        throw new BadRequestException("Invalid category value: " + category);
+        throw new BadRequestException("Invalid category value: " + category + " Allowed categories are: work, personal, others");
     }
 }

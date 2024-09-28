@@ -10,7 +10,7 @@ public interface TaskService {
     List<TaskDto> getTasks(String status, String sortBy, int page, int size);
     TaskDto getTask(int id);
     TaskDto createTask(CreateTaskDto task);
-    TaskDto updateTask(int id, Task task);
+    TaskDto updateTask(int id, TaskDto taskDto);
     void deleteTask(int id);
     TaskDto completeTask(int id);
     void checkLowPriorityTasks();

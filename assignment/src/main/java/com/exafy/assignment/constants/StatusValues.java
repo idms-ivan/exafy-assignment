@@ -8,18 +8,18 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum StatusValues {
     PENDING("pending"),
-    IN_PROGRESS("in progress"),
-    COMPLETED("Completed"),
+    IN_PROGRESS("in_progress"),
+    COMPLETED("completed"),
     OVERDUE("overdue");
 
     final String statusValues;
 
-    public static StatusValues checkIsValid(String status){
+    public static void checkIsValid(String status){
         for(StatusValues statusValues : StatusValues.values()){
             if(statusValues.getStatusValues().equalsIgnoreCase(status)){
-                return statusValues;
+                return;
             }
         }
-        throw new BadRequestException("Invalid status value: " + status);
+        throw new BadRequestException("Invalid status value: " + status + " Allowed values are: pending, in_progress, completed, overdue");
     }
 }

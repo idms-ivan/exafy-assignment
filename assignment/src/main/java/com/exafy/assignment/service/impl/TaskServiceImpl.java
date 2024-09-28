@@ -14,8 +14,10 @@ import com.exafy.assignment.repository.NotificationTriggerRepository;
 import com.exafy.assignment.repository.TaskRepository;
 import com.exafy.assignment.service.EmailService;
 import com.exafy.assignment.service.TaskService;
+import com.exafy.assignment.util.BeanCopyUtils;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -78,8 +80,10 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskDto updateTask(int id, Task task) {
+    public TaskDto updateTask(int id, TaskDto taskDto) {
         Task taskToUpdate = taskRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Task with id %s not found.", id)));
+
+        BeanCopyUtils.copyNonNullOrZeroProperties(taskDto, taskToUpdate);
 
         taskRepository.save(taskToUpdate);
         return toDtoConverter.convert(taskToUpdate);

@@ -13,12 +13,12 @@ public enum PriorityValues {
 
     final String priorityValue;
 
-    public static PriorityValues checkIsValid(String priority){
+    public static void checkIsValid(String priority){
         for(PriorityValues priorityValues : PriorityValues.values()){
             if(priorityValues.getPriorityValue().equalsIgnoreCase(priority)){
-                return priorityValues;
+                return;
             }
         }
-        throw new BadRequestException("Invalid priority value: " + priority);
+        throw new BadRequestException("Invalid priority value: " + priority + " Allowed values: low, medium or high");
     }
 }

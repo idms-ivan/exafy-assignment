@@ -7,6 +7,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
 
@@ -17,10 +18,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((authz) -> authz
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .anyRequest()
+                        .authenticated()
                 )
-                .httpBasic(Customizer.withDefaults());
+                .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(Customizer.withDefaults())
+                .headers(headers -> headers
+                        .contentSecurityPolicy(cps -> cps.policyDirectives("frame-ancestors 'self'")) // Allow same-origin frames
+                );
         return http.build();
     }
 
