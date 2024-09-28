@@ -65,8 +65,6 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskDto createTask(CreateTaskDto task) {
 
-        System.out.println("USAO U CREATE TASSASSAA");
-
         PriorityValues.checkIsValid(task.getPriority());
         CategoryValues.checkIsValid(task.getCategory());
         StatusValues.checkIsValid(task.getStatus());
