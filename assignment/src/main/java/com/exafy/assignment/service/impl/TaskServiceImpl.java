@@ -17,13 +17,13 @@ import com.exafy.assignment.service.TaskService;
 import com.exafy.assignment.util.BeanCopyUtils;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,19 +65,25 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskDto createTask(CreateTaskDto task) {
 
+        System.out.println("USAO U CREATE TASSASSAA");
+
         PriorityValues.checkIsValid(task.getPriority());
         CategoryValues.checkIsValid(task.getCategory());
         StatusValues.checkIsValid(task.getStatus());
 
         final Task newTask = toTaskConverter.convert(task);
         taskRepository.save(newTask);
-   //     emailService.sendEmail(newTask.getAssignedUser(), "Task created", newTask.getTitle());
+        emailService.sendEmail(newTask.getAssignedUser(), "Task created", "There is new task created for you. With title " + newTask.getTitle());
         return toDtoConverter.convert(newTask);
     }
 
     @Override
     public TaskDto updateTask(int id, TaskDto taskDto) {
         Task taskToUpdate = taskRepository.findById(id).orElseThrow(() -> new NotFoundException(String.format("Task with id %s not found.", id)));
+
+        if(taskDto.getAssignedUser() != null && !taskDto.getAssignedUser().equals(taskToUpdate.getAssignedUser())) {
+            emailService.sendEmail(taskDto.getAssignedUser(), "Task assigned", "There is new task assigned to u.");
+        }
 
         BeanCopyUtils.copyNonNullOrZeroProperties(taskDto, taskToUpdate);
 
@@ -105,36 +111,39 @@ public class TaskServiceImpl implements TaskService {
     }
 
 
-    //@Scheduled(cron = "*/20 * * * * ?")
+    @Scheduled(cron = "*/20 * * * * ?")
     public void checkLowPriorityTasks() {
         final List<Task> tasks = tasksWithNotification(PriorityValues.LOW.getPriorityValue());
 
         for (Task task : tasks) {
-            emailService.sendEmail(task.getAssignedUser(), "Low Priority Task", task.getPriority());
+            emailService.sendEmail(task.getAssignedUser(), "Low Priority Task", "There is low priority task close to due date.");
         }
     }
 
 
-    //@Scheduled(cron = "*/10 * * * * ?")
+    @Scheduled(cron = "*/10 * * * * ?")
     public void checkMediumPriorityTasks() {
         final List<Task> tasks = tasksWithNotification(PriorityValues.MEDIUM.getPriorityValue());
 
         for (Task task : tasks) {
-            emailService.sendEmail(task.getAssignedUser(), "Medium Priority Task", task.getPriority());
+            emailService.sendEmail(task.getAssignedUser(), "Medium Priority Task", "There is medium priority task close to due date.");
         }
     }
 
 
-    //@Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "*/5 * * * * ?")
     public void checkHighPriorityTasks() {
         final List<Task> tasks = tasksWithNotification(PriorityValues.HIGH.getPriorityValue());
 
         for (Task task : tasks) {
-            emailService.sendEmail(task.getAssignedUser(), "High Priority Task", task.getPriority());
+           emailService.sendEmail(task.getAssignedUser(), "High Priority Task", "There is high priority task close to due date.");
         }
     }
 
     private List<Task> tasksWithNotification(String priority){
+        LocalDate today = LocalDate.now();
+        LocalDate nextWeek = today.plusWeeks(1);
+
         List<NotificationTriggers> statuses = notificationTriggerRepository.findAll();
 
         List<String> checkStatuses = new ArrayList<>();
@@ -143,7 +152,7 @@ public class TaskServiceImpl implements TaskService {
             checkStatuses.add(status.getStatus());
         }
 
-      return taskRepository.findAllTasksByPriorityAndStatus(priority, checkStatuses);
+      return taskRepository.findAllTasksByPriorityAndStatus(priority, checkStatuses, today, nextWeek);
     }
 
 }

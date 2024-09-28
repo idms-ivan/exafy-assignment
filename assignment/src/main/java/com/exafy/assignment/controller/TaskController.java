@@ -3,6 +3,7 @@ package com.exafy.assignment.controller;
 import com.exafy.assignment.dto.CreateTaskDto;
 import com.exafy.assignment.dto.TaskDto;
 import com.exafy.assignment.service.TaskService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskDto> createTask(@RequestBody CreateTaskDto task) {
+    public ResponseEntity<TaskDto> createTask(@Valid @RequestBody CreateTaskDto task) {
         final TaskDto createdTask = taskService.createTask(task);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);
     }

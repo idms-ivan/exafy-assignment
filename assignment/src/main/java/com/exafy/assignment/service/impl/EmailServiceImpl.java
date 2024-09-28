@@ -1,5 +1,6 @@
 package com.exafy.assignment.service.impl;
 
+import com.exafy.assignment.exception.BadRequestException;
 import com.exafy.assignment.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -19,6 +20,11 @@ public class EmailServiceImpl implements EmailService {
         message.setTo(sendTo);
         message.setSubject(subject);
         message.setText(body);
-        mailSender.send(message);
+
+        try {
+         mailSender.send(message);
+        } catch (Exception e){
+            throw new BadRequestException(e.getMessage());
+        }
     }
 }

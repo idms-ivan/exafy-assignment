@@ -1,5 +1,6 @@
 package com.exafy.assignment.service.impl;
 
+import com.exafy.assignment.constants.StatusValues;
 import com.exafy.assignment.dto.CreateNotificationTrigger;
 import com.exafy.assignment.model.NotificationTriggers;
 import com.exafy.assignment.repository.NotificationTriggerRepository;
@@ -15,6 +16,8 @@ public class NotificationTriggerServiceImpl implements NotificationTriggerServic
 
     @Override
     public void addTrigger(CreateNotificationTrigger trigger) {
+
+        StatusValues.checkIsValid(trigger.getStatus());
 
         NotificationTriggers notificationTrigger = new NotificationTriggers();
         notificationTrigger.setStatus(trigger.getStatus());
