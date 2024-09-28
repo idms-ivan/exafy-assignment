@@ -52,7 +52,7 @@ public class TaskServiceTest {
 
     @Test
     public void shouldGetAllTasks() {
-       
+
         final Task task1 = Task.builder()
                 .id(1)
                 .title("Zadatak 1")
